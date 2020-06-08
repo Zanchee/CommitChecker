@@ -36,7 +36,7 @@ Reports can either be printed to the console or output to a file. They come two 
 ### JIRA Configuration
 | Key              | Description                            | Optional | Default Value              |
 | ---------------- | -------------------------------------- | -------- | -------------------------- |
-| resolvedKeywords | List of resolved keywords              | `true`   | Array<String>(TODO)        |
+| resolvedKeywords | List of resolved keywords              | `true`   | `done` `resolved` `completed` `approved` `fixed` `implemented` |
 | fixVersion       | The JIRA fixVersion                    | `true`   | Prompted during execution  |
 | projects         | The JIRA Projects to include           | `true`   | Prompted during execution  |
 | username         | Your JIRA username                     | `true`   | Prompted during execution  |
