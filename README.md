@@ -13,6 +13,9 @@ Reports can either be printed to the console or output to a file. They come two 
 - TEXT Outputs a plain text report. Useful for continous integration builds.
 - HTML Outputs a styled html report similar to Github's markdown. Useful for sharing and reporting.
 
+## Parsing Commits
+By default the script looks for issues in the commit message, surrounded by brackets. `[APP-123]`
+
 ## Configuration
 **CommitChecker** looks for a configuration file called `commit_checker.json` in the current directory and uses it to configure both required and optional parameters.
 
