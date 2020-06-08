@@ -53,26 +53,12 @@ Reports can either be printed to the console or output to a file. They come two 
 ### Example JSON
 ```
 {
-    "cli": "/bin/sh",
-    "git": {
-        "path": null,
-        "delimiter": ";:;",
-        "issueRegex": "(?<=\\[).+?(?=\\])",
-        "startBranch": "3.28",
-        "endBranch": "develop"
-    },
     "jira": {
-        "resolvedKeywords": ["done", "resolved", "completed", "approved", "fixed", "implemented"],
-        "fixVersion": "3.29",
-        "projects": ["App"],
-        "username": null,
-        "password": null,
-        "url": null
+        "url": <jira-url>
     },
     "report": {
-        "output": "./",
+        "output": "./commit_reports",
         "format": "html",
-        "openWhenComplete": true
     }
 }
 ```
