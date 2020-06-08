@@ -30,8 +30,8 @@ By default the script looks for issues in the commit message, surrounded by brac
 ### GIT Configuration
 | Key         | Description                            | Optional | Default Value              |
 | ----------- | -------------------------------------- | -------- | -------------------------- |
-| path        | Path to your `.git` file               | `true`   | String(`./`)               |
-| delimiter   | Delimiter used for `git log`           | `true`   | String(`;\|;`)              |
+| path        | Path to your `.git` file               | `true`   | String(`./.git`)           |
+| delimiter   | Delimiter used for `git log`           | `true`   | String(`;\|;`)             |
 | issueRegex  | REGEX used to find tickets in commits. | `true`   | String(`(?<=\[).+?(?=\])`) |
 | startBranch | Start branch for commit range          | `true`   | Prompted during execution  |
 | endBranch   | End branch for commit range            | `true`   | Prompted during execution  |     
