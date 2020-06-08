@@ -164,7 +164,7 @@ extension ReportConfiguration: Decodable {
         case openWhenComplete
     }
     
-    static let `default` = ReportConfiguration(output: nil, format: .html, openWhenComplete: true)
+    static let `default` = ReportConfiguration(output: nil, format: .text, openWhenComplete: true)
 }
 
 // MARK: - DEBUG Configuration
