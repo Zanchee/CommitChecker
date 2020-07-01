@@ -13,6 +13,9 @@ Reports can either be printed to the console or output to a file. They come two 
 - TEXT Outputs a plain text report. Useful for continous integration builds.
 - HTML Outputs a styled html report similar to Github's markdown. Useful for sharing and reporting.
 
+## Parsing Commits
+By default the script looks for issues in the commit message, surrounded by brackets. `[APP-123]`
+
 ## Configuration
 **CommitChecker** looks for a configuration file called `commit_checker.json` in the current directory and uses it to configure both required and optional parameters.
 
@@ -27,8 +30,8 @@ Reports can either be printed to the console or output to a file. They come two 
 ### GIT Configuration
 | Key         | Description                            | Optional | Default Value              |
 | ----------- | -------------------------------------- | -------- | -------------------------- |
-| path        | Path to your `.git` file               | `true`   | String(`./`)               |
-| delimiter   | Delimiter used for `git log`           | `true`   | String(`;\|;`)              |
+| path        | Path to your `.git` file               | `true`   | String(`./.git`)           |
+| delimiter   | Delimiter used for `git log`           | `true`   | String(`;\|;`)             |
 | issueRegex  | REGEX used to find tickets in commits. | `true`   | String(`(?<=\[).+?(?=\])`) |
 | startBranch | Start branch for commit range          | `true`   | Prompted during execution  |
 | endBranch   | End branch for commit range            | `true`   | Prompted during execution  |     
@@ -53,26 +56,12 @@ Reports can either be printed to the console or output to a file. They come two 
 ### Example JSON
 ```
 {
-    "cli": "/bin/sh",
-    "git": {
-        "path": null,
-        "delimiter": ";:;",
-        "issueRegex": "(?<=\\[).+?(?=\\])",
-        "startBranch": "3.28",
-        "endBranch": "develop"
-    },
     "jira": {
-        "resolvedKeywords": ["done", "resolved", "completed", "approved", "fixed", "implemented"],
-        "fixVersion": "3.29",
-        "projects": ["App"],
-        "username": null,
-        "password": null,
-        "url": null
+        "url": <jira-url>
     },
     "report": {
-        "output": "./",
+        "output": "./commit_reports",
         "format": "html",
-        "openWhenComplete": true
     }
 }
 ```
