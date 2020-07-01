@@ -66,7 +66,7 @@ struct GitConfiguration {
     let startBranch: String?
     let endBranch: String?
     
-    static let `default` = GitConfiguration(path: "./",
+    static let `default` = GitConfiguration(path: "./.git",
                                             delimiter: ";|;",
                                             issueRegex: #"(?<=\[).+?(?=\])"#,
                                             startBranch: nil,
@@ -185,7 +185,7 @@ let DEBUG_CONFIGURATION = """
         "projects": ["TVOS"],
         "username": null,
         "password": null,
-        "url": null
+        "url": "https://fng-jira.fox.com"
     },
     "report": {
         "output": "./",

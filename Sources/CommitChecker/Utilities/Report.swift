@@ -316,7 +316,7 @@ extension Report {
             let message = commit.message
             let issues = commit.issues.map { issue in
                 return "[\(issue)](\(Configuration.current.jira.url)/browse/\(issue))"
-            }.joined(separator: "\n")
+            }.joined(separator: ", ")
             return "| \(issues) | \(message) | \(author) |"
         }.joined(separator: "\n"))
 
