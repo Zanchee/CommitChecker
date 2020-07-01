@@ -55,13 +55,27 @@ By default the script looks for issues in the commit message, surrounded by brac
 
 ### Example JSON
 ```
+
 {
+    "cli": "/bin/sh",
+    "git": {
+        "path": "./.git",
+        "delimiter": ";:;",
+        "startBranch": null,
+        "endBranch": null
+    },
     "jira": {
-        "url": <jira-url>
+        "resolvedKeywords": ["done", "resolved", "completed", "approved", "fixed", "implemented"],
+        "fixVersion": null,
+        "projects": null,
+        "username": null,
+        "password": null,
+        "url": null
     },
     "report": {
-        "output": "./commit_reports",
+        "output": "./",
         "format": "html",
+        "openWhenComplete": true
     }
 }
 ```
