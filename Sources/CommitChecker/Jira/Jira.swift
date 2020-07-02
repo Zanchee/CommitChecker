@@ -72,9 +72,9 @@ enum Jira: API {
             case .success(let jiraSearch):
                 issues.append(contentsOf: jiraSearch.issues)
                 Messenger.import("Received \(issues.count) of \(jiraSearch.total) issues.")
-                if issues.count + start < jiraSearch.total {
+                if issues.count < jiraSearch.total {
                     getIssuesFor(query: query,
-                                 start: issues.count + start,
+                                 start: issues.count,
                                  issues: issues,
                                  completion: completion)
                 } else {
