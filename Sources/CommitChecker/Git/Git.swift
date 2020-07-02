@@ -28,7 +28,7 @@ enum Git {
     }
     
     static func commits(between startBranch: String, and endBranch: String) -> [GitCommit] {
-        let commitsString = sh("\(git) log '\(startBranch)'..'\(endBranch)' --oneline --pretty=format:'%h\(delimiter)%an\(delimiter)%ad\(delimiter)%s'").components(separatedBy: "\n")
+        let commitsString = sh("\(git) log '\(startBranch)'..'\(endBranch)' --date=short --oneline --pretty=format:'%h\(delimiter)%an\(delimiter)%ad\(delimiter)%s'").components(separatedBy: "\n")
         let commits = commitsString.map { commitString -> GitCommit in
             let components = commitString.components(separatedBy: Git.delimiter)
             return GitCommit(hash: components[safe: 0],

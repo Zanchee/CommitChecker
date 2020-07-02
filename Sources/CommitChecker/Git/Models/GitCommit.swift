@@ -12,7 +12,7 @@ struct GitCommit: Equatable {
     // MARK: Properties
     
     let hash: String?
-    let date: String?
+    let date: String
     let author: String
     let message: String
     let issues: [String]
@@ -25,7 +25,7 @@ struct GitCommit: Equatable {
 
     init(hash: String?, author: String?, date: String?, message: String?) {
         self.hash = hash
-        self.date = date
+        self.date = date ?? "No Date"
         self.author = author ?? "No Author"
         self.message = message ?? "No Message"
 

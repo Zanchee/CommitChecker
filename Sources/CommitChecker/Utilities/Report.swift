@@ -307,12 +307,13 @@ extension Report {
         
         These commits should be analyzed to make sure that no risk was introduced by their untracked changes.
         
-        | Message | Author  |
-        | ------- | ------  |
+        | Message | Author | Date |
+        | ------- | ------ | ---- |
         \(commitsWithoutIssues.map { commit in
             let message = commit.message
             let author = commit.author
-            return "| \(message) | \(author) |"
+            let date = commit.date
+            return "| \(message) | \(author) | \(date) |"
         }.joined(separator: "\n"))
 
         ## ⚠️ \(commitsWithUnwantedIssues.count) Commits With Unwanted Issues (\(commitsWithUnwantedIssuesPercentage))
@@ -323,15 +324,16 @@ extension Report {
         
         These commits should be analyzed to make sure that no risk was introduced by their changes.
         
-        | Issues | Message  | Author   |
-        | ------ | -------  | -------- |
+        | Issues | Message | Author | Date |
+        | ------ | ------- | ------ | ---- |
         \(commitsWithUnwantedIssues.map { commit -> String in
             let author = commit.author
             let message = commit.message
+            let date = commit.date
             let issues = commit.issues.map { issue in
                 return "[\(issue)](\(Configuration.current.jira.url)/browse/\(issue))"
             }.joined(separator: ", ")
-            return "| \(issues) | \(message) | \(author) |"
+            return "| \(issues) | \(message) | \(author) | \(date) |"
         }.joined(separator: "\n"))
 
         ## ⚠️ \(incompleteIssues.count) Incomplete Issues (\(incompleteIssuesPercentage))
