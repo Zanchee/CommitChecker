@@ -300,6 +300,13 @@ extension Report {
         - ⚠️ \(issuesWithoutCommits.count) **issues** not referenced in any **commit**.
 
         ## ⚠️ \(commitsWithoutIssues.count) Commits Without Issues (\(commitsWithoutIssuesPercentage))
+        This section lists out work that was commited to the repository that did not directly reference any JIRA issue in the commit message. This could be due a few reasons...
+        
+        - The author is not using the repository commit script to auto tag their commits.
+        - The commit was a small task that did not have an associated ticket.
+        
+        These commits should be analyzed to make sure that no risk was introduced by their untracked changes.
+        
         | Message | Author  |
         | ------- | ------  |
         \(commitsWithoutIssues.map { commit in
@@ -309,6 +316,13 @@ extension Report {
         }.joined(separator: "\n"))
 
         ## ⚠️ \(commitsWithUnwantedIssues.count) Commits With Unwanted Issues (\(commitsWithUnwantedIssuesPercentage))
+        This section lists out work that was commited to the repository that referenced a JIRA issue that had a different fix version than the one specified by the script. This could be due to a few reasons...
+        
+        - Work for a future release was merged into this repository.
+        - The JIRA ticket's fix version is wrong.
+        
+        These commits should be analyzed to make sure that no risk was introduced by their changes.
+        
         | Issues | Message  | Author   |
         | ------ | -------  | -------- |
         \(commitsWithUnwantedIssues.map { commit -> String in
@@ -321,6 +335,15 @@ extension Report {
         }.joined(separator: "\n"))
 
         ## ⚠️ \(unresolvedIssues.count) Unresolved Issues (\(unresolvedIssuesPercentage))
+        This section lists out the JIRA issues that have not be closed out. This could be due to a few reasons...
+        
+        - The ticket is still in development
+        - The ticket was rejected
+        - The ticket is in QA
+        - The ticket is in product review
+        
+        These JIRA issues should be analyzed to make sure that we have no outstanding work to complete before releasing.
+        
         | Number   | Summary  | Resolution | Labels | Asignee |
         | -------- | -------  | ---------- | ------ | ------- |
         \(unresolvedIssues.map { issue -> String in
@@ -333,6 +356,12 @@ extension Report {
         }.joined(separator: "\n"))
         
         ## ⚠️ \(issuesWithoutCommits.count) Issues Without Commits (\(issuesWithoutCommitsPercentage))
+        This section lists JIRA issues that don't have any  commits associated with them. This could be due to a few reasons...
+        
+        - The JIRA issue didn't require any work on the client.
+        
+        These JIRA issues should be analyzed to make sure that we aren't missing any work that still needs to be complete.
+        
         | Number   | Summary  | Resolution | Labels | Asignee |
         | -------- | -------- | ---------- | ------ | ------- |
         \(issuesWithoutCommits.map { issue -> String in
