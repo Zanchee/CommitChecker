@@ -7,7 +7,7 @@
         "endBranch": null
     },
     "jira": {
-        "resolvedKeywords": ["done", "resolved", "completed", "approved", "fixed", "implemented"],
+        "completeKeywords": ["closed"],
         "fixVersion": null,
         "projects": null,
         "username": null,

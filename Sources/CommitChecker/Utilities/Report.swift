@@ -37,8 +37,8 @@ struct Report: Equatable {
     private let commitsWithUnwantedIssues: [GitCommit]
     private let commitsWithUnwantedIssuesPercentage: String
     
-    private let unresolvedIssues: [JiraIssue]
-    private let unresolvedIssuesPercentage: String
+    private let incompleteIssues: [JiraIssue]
+    private let incompleteIssuesPercentage: String
     
     private let issuesWithoutCommits: [JiraIssue]
     private let issuesWithoutCommitsPercentage: String
@@ -86,9 +86,9 @@ struct Report: Equatable {
         self.commitsWithUnwantedIssues = Report.commitsWithUnwantedIssues(commits: nonMergeCommits, issues: issues)
         self.commitsWithUnwantedIssuesPercentage = (Double(commitsWithUnwantedIssues.count) / Double(nonMergeCommits.count)).percent()
         Messenger.warn("\(commitsWithUnwantedIssues.count) commits for work not in \(version)")
-        self.unresolvedIssues = issues.unresolvedIssues
-        self.unresolvedIssuesPercentage = (Double(unresolvedIssues.count) / Double(issues.count)).percent()
-        Messenger.warn("\(unresolvedIssues.count) unresolved issues.")
+        self.incompleteIssues = issues.incompleteIssues
+        self.incompleteIssuesPercentage = (Double(incompleteIssues.count) / Double(issues.count)).percent()
+        Messenger.warn("\(incompleteIssues.count) incomplete issues.")
         self.issuesWithoutCommits = Report.issuesWithoutCommits(commits: nonMergeCommits, issues: issues)
         self.issuesWithoutCommitsPercentage = (Double(issuesWithoutCommits.count) / Double(issues.count)).percent()
         Messenger.warn("\(issuesWithoutCommits.count) issues not referenced in any commit.")
@@ -168,7 +168,7 @@ extension Report {
         \(textMergeCommitsSummary)
         \(textCommitsWithoutIssuesSummary)
         \(textCommitsWithUnwantedIssuesSummary)
-        \(textUnresolvedIssuesSummary)
+        \(textIncompleteIssuesSummary)
         \(textIssuesWithoutCommitsSummary)
         
         \(createTextTitle(for: "⚠️  Commits Without Issues \(commitsWithoutIssues.count) "))
@@ -190,13 +190,13 @@ extension Report {
             """
         }.joined(separator: "\n\n"))
         
-        \(createTextTitle(for: "⚠️  Unresolved Issues (\(unresolvedIssues.count)) "))
+        \(createTextTitle(for: "⚠️  Incomplete Issues (\(incompleteIssues.count)) "))
         
-        \(unresolvedIssues.map { issue in
+        \(incompleteIssues.map { issue in
             return """
             Issue: \(issue.key)
             Summary: \(issue.fields.summary)
-            Resolution: \(issue.fields.resolution?.name ?? "No Resolution")
+            Status: \(issue.fields.status?.name ?? "No Status")
             Labels: \(issue.fields.labels?.joined(separator: ", ") ?? "No Labels")
             URL: \(issue.url)
             """
@@ -208,7 +208,7 @@ extension Report {
             return """
             Issue: \(issue.key)
             Summary: \(issue.fields.summary)
-            Resolution: \(issue.fields.resolution?.name ?? "No Resolution")
+            Status: \(issue.fields.status?.name ?? "No Status")
             Labels: \(issue.fields.labels?.joined(separator: ", ") ?? "No Labels")
             URL: \(issue.url)
             """
@@ -249,9 +249,9 @@ extension Report {
         return combineTextSummary(partA, and: partB)
     }
     
-    private var textUnresolvedIssuesSummary: String {
-        let partA = "\(unresolvedIssues.count) unresolved issues."
-        let partB = "(\(unresolvedIssuesPercentage))"
+    private var textIncompleteIssuesSummary: String {
+        let partA = "\(incompleteIssues.count) incomplete issues."
+        let partB = "(\(incompleteIssuesPercentage))"
         return combineTextSummary(partA, and: partB)
     }
     
@@ -285,7 +285,7 @@ extension Report {
         # ✅ CommitChecker Report
         **Timeline Analyzed:** `\(startBranch)...\(endBranch)`
         
-        **Projects:** \(projects.reduce("") { result, project in result.isEmpty ? "`\(project)`" : " `\(project)`"})
+        **Projects:** `\(projects.joined(separator: ", "))`
         
         **Version:** `\(version)`
         
@@ -296,7 +296,7 @@ extension Report {
         - ℹ️ \(commits.count - nonMergeCommits.count) merge **commits**.
         - ⚠️ \(commitsWithoutIssues.count) **commits** that don't contain an **issue**.
         - ⚠️ \(commitsWithUnwantedIssues.count) **commits** for work not in **\(version)**.
-        - ⚠️ \(unresolvedIssues.count) unresolved **issues**.
+        - ⚠️ \(incompleteIssues.count) incomplete **issues**.
         - ⚠️ \(issuesWithoutCommits.count) **issues** not referenced in any **commit**.
 
         ## ⚠️ \(commitsWithoutIssues.count) Commits Without Issues (\(commitsWithoutIssuesPercentage))
@@ -334,7 +334,7 @@ extension Report {
             return "| \(issues) | \(message) | \(author) |"
         }.joined(separator: "\n"))
 
-        ## ⚠️ \(unresolvedIssues.count) Unresolved Issues (\(unresolvedIssuesPercentage))
+        ## ⚠️ \(incompleteIssues.count) Incomplete Issues (\(incompleteIssuesPercentage))
         This section lists out the JIRA issues that have not be closed out. This could be due to a few reasons...
         
         - The ticket is still in development
@@ -344,33 +344,33 @@ extension Report {
         
         These JIRA issues should be analyzed to make sure that we have no outstanding work to complete before releasing.
         
-        | Number   | Summary  | Resolution | Labels | Asignee |
-        | -------- | -------  | ---------- | ------ | ------- |
-        \(unresolvedIssues.map { issue -> String in
+        | Number   | Summary | Status | Labels  | Asignee |
+        | -------- | ------- | ------ | ------- | ------- |
+        \(incompleteIssues.map { issue -> String in
             let number = "[\(issue.key)](\(issue.url))"
             let summary = issue.fields.summary
-            let resolution = issue.fields.resolution?.name ?? "No Resolution"
+            let status = issue.fields.status?.name ?? "No Status"
             let labels = issue.fields.labels?.compactMap { "`\($0)`" }.joined(separator: " ") ?? "No Labels"
             let asignee = issue.fields.assignee?.displayName ?? "No Asignee"
-            return "| \(number) | \(summary) | \(resolution) | \(labels) | \(asignee) |"
+            return "| \(number) | \(summary) | \(status) | \(labels) | \(asignee) |"
         }.joined(separator: "\n"))
         
         ## ⚠️ \(issuesWithoutCommits.count) Issues Without Commits (\(issuesWithoutCommitsPercentage))
-        This section lists JIRA issues that don't have any  commits associated with them. This could be due to a few reasons...
+        This section lists JIRA issues that don't have any commits associated with them. This could be due to a few reasons...
         
         - The JIRA issue didn't require any work on the client.
         
         These JIRA issues should be analyzed to make sure that we aren't missing any work that still needs to be complete.
         
-        | Number   | Summary  | Resolution | Labels | Asignee |
-        | -------- | -------- | ---------- | ------ | ------- |
+        | Number   | Summary  | Status | Labels  | Asignee |
+        | -------- | -------- | ------ | ------- | ------- |
         \(issuesWithoutCommits.map { issue -> String in
             let number = "[\(issue.key)](\(issue.url))"
             let summary = issue.fields.summary
-            let resolution = issue.fields.resolution?.name ?? "No Resolution"
+            let status = issue.fields.status?.name ?? "No Status"
             let labels = issue.fields.labels?.compactMap { "`\($0)`" }.joined(separator: " ") ?? "No Labels"
             let asignee = issue.fields.assignee?.displayName ?? "No Asignee"
-            return "| \(number) | \(summary) | \(resolution) | \(labels) | \(asignee) |"
+            return "| \(number) | \(summary) | \(status) | \(labels) | \(asignee) |"
         }.joined(separator: "\n"))
         """
     }
@@ -384,6 +384,7 @@ extension Report {
                 <style>
                     \(Self.styledCSS)
                 </style>
+                <base target="_blank">
                 <meta charset="UTF-8">
                 <meta name="author" content="Connor Ricks">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -447,7 +448,7 @@ fileprivate extension Array where Element == GitCommit {
 }
 
 fileprivate extension Array where Element == JiraIssue {
-    var unresolvedIssues: [JiraIssue]  {
-        filter { !($0.fields.resolution?.isResolved ?? false) }
+    var incompleteIssues: [JiraIssue]  {
+        filter { !($0.fields.status?.isComplete ?? false) }
     }
 }

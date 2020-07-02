@@ -28,19 +28,19 @@ struct JiraIssue: Decodable, Equatable {
 // MARK: - JiraFields
 
 struct JiraFields: Decodable, Equatable {
-    let resolution: JiraResolution?
+    let status: JiraStatus?
     let assignee: JiraAssignee?
     let labels: [String]?
     let summary: String
 }
 
-// MARK: - JiraResolution
+// MARK: JiraStatus
 
-struct JiraResolution: Decodable, Equatable {
+struct JiraStatus: Decodable, Equatable {
     let name: String
-
-    var isResolved: Bool {
-        return  Configuration.current.jira.resolvedKeywords.contains(name.lowercased())
+    
+    var isComplete: Bool {
+       Configuration.current.jira.completeKeywords.contains(name.lowercased())
     }
 }
 

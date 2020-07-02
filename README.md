@@ -5,7 +5,7 @@
 After running the script, **CommitChecker** outputs a report that checks the following...
 - All Commits without associated issues.
 - Commits that contain issues not associated with the specified fix version.
-- Issues for a JIRA fix version that are not resolved.
+- Issues for a JIRA fix version that are not incomplete.
 - Issues for a JIRA fix version that don't have any associated commits.
 
 ## Reporting
@@ -39,7 +39,7 @@ By default the script looks for issues in the commit message, surrounded by brac
 ### JIRA Configuration
 | Key              | Description                            | Optional | Default Value              |
 | ---------------- | -------------------------------------- | -------- | -------------------------- |
-| resolvedKeywords | List of resolved keywords              | `true`   | `done` `resolved` `completed` `approved` `fixed` `implemented` |
+| completeKeywords  | List of complete keywords              | `true`   | `closed` |
 | fixVersion       | The JIRA fixVersion                    | `true`   | Prompted during execution  |
 | projects         | The JIRA Projects to include           | `true`   | Prompted during execution  |
 | username         | Your JIRA username                     | `true`   | Prompted during execution  |
@@ -65,7 +65,7 @@ By default the script looks for issues in the commit message, surrounded by brac
         "endBranch": null
     },
     "jira": {
-        "resolvedKeywords": ["done", "resolved", "completed", "approved", "fixed", "implemented"],
+        "completeKeywords": ["closed"],
         "fixVersion": null,
         "projects": null,
         "username": null,

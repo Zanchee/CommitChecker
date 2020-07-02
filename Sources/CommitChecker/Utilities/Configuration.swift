@@ -95,20 +95,20 @@ extension GitConfiguration: Decodable {
 // MARK: - JiraConfiguration
 
 struct JiraConfiguration {
-    let resolvedKeywords: [String]
+    let completeKeywords: [String]
     let fixVersion: String?
     let projects: [String]?
     let username: String?
     let password: String?
     let url: String
     
-    static let defaultResolvedKeywords = ["done", "resolved", "completed", "approved", "fixed", "implemented"]
+    static let defaultCompleteKeywords = ["closed"]
 }
 
 extension JiraConfiguration: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.resolvedKeywords = try container.decodeIfPresent([String].self, forKey: .resolvedKeywords) ?? Self.defaultResolvedKeywords
+        self.completeKeywords = try container.decodeIfPresent([String].self, forKey: .completeKeywords) ?? Self.defaultCompleteKeywords
         self.fixVersion = try container.decodeIfPresent(String.self, forKey: .fixVersion)
         self.projects = try container.decodeIfPresent([String].self, forKey: .projects)
         self.username = try container.decodeIfPresent(String.self, forKey: .username)
@@ -122,7 +122,7 @@ extension JiraConfiguration: Decodable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case resolvedKeywords
+        case completeKeywords
         case fixVersion
         case projects
         case username
