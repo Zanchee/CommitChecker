@@ -14,9 +14,11 @@ if let configStartBranch = Configuration.current.git.startBranch {
     startBranch = configStartBranch
     Messenger.import("Pulled start branch \(startBranch) from configuration file")
 } else {
-    startBranch = Input.required(message: "Please enter a start branch",
-                                 type: String.self,
-                                 defaultValue: Git.currentBranch())
+    guard let branch = ProcessInfo.processInfo.environment["START_BRANCH"] ?? Git.currentBranch() else {
+        Messenger.error("No Start Branch Provided")
+    }
+    Messenger.import("Pulled start branch \(branch) from environment")
+    startBranch = branch
 }
 
 let endBranch: String
@@ -24,9 +26,11 @@ if let configEndBranch = Configuration.current.git.endBranch {
     endBranch = configEndBranch
     Messenger.import("Pulled end branch \(endBranch) from configuration file")
 } else {
-    endBranch = Input.required(message: "Please enter an end branch",
-                               type: String.self,
-                               defaultValue: Git.currentBranch())
+    guard let branch = ProcessInfo.processInfo.environment["END_BRANCH"] ?? Git.currentBranch() else {
+        Messenger.error("No End Branch Provided")
+    }
+    Messenger.import("Pulled end branch \(branch) from environment")
+    endBranch = branch
 }
 
 let commits = Git.commits(between: startBranch, and: endBranch)
@@ -39,7 +43,11 @@ if let configProjects = Configuration.current.jira.projects {
     projects = configProjects
     Messenger.import("Pulled projects \(projects) from configuration file")
 } else {
-    projects = Input.required(message: "Please enter a comma delimited list of projects", type: [String].self)
+    guard let definedProjects = ProcessInfo.processInfo.environment["PROJECTS"] else {
+        Messenger.error("No Projects Provided")
+    }
+    Messenger.import("Pulled projects \(definedProjects) from environment")
+    projects = definedProjects.split(separator: ",").map({String($0)})
 }
 
 let version: String
@@ -47,27 +55,27 @@ if let configVersion = Configuration.current.jira.fixVersion {
     version = configVersion
     Messenger.import("Pulled JIRA version \(version) from configuration file")
 } else {
-    version = Input.required(message: "Please enter a JIRA fix version", type: String.self)
+    guard let definedVersion = ProcessInfo.processInfo.environment["VERSION"] else {
+        Messenger.error("No Version Provided")
+    }
+    Messenger.import("Pulled version \(definedVersion) from environment")
+    version = definedVersion
 }
 
-let username: String
-if let configUsername = Configuration.current.jira.username {
-    username = configUsername
-    Messenger.import("Pulled JIRA username \(username) from configuration file")
-} else {
-    username = Input.username(message: "JIRA Username")
-}
-
-let password: String
-if let configPassword = Configuration.current.jira.password {
-    password = configPassword
+let token: String
+if let configToken = Configuration.current.jira.token {
+    token = configToken
     Messenger.import("Pulled JIRA password ••••••••• from configuration file")
 } else {
-    password = Input.password(message: "JIRA Password")
+    guard let definedToken = ProcessInfo.processInfo.environment["JIRA_ACCESS"] else {
+        Messenger.error("No JIRA Token Provided")
+    }
+    Messenger.import("Pulled token ••••••••• from environment")
+    token = definedToken
 }
 
-guard let authentication = "\(username):\(password)".data(using: .utf8)?.base64EncodedString() else {
-    Messenger.error("Unable to encode username and password!")
+guard let authentication = "\(token)".data(using: .utf8)?.base64EncodedString() else {
+    Messenger.error("Unable to encode token!")
 }
 
 Jira.credentials = authentication

@@ -98,8 +98,7 @@ struct JiraConfiguration {
     let completeKeywords: [String]
     let fixVersion: String?
     let projects: [String]?
-    let username: String?
-    let password: String?
+    let token: String?
     let url: String
     
     static let defaultCompleteKeywords = ["closed"]
@@ -111,9 +110,8 @@ extension JiraConfiguration: Decodable {
         self.completeKeywords = try container.decodeIfPresent([String].self, forKey: .completeKeywords) ?? Self.defaultCompleteKeywords
         self.fixVersion = try container.decodeIfPresent(String.self, forKey: .fixVersion)
         self.projects = try container.decodeIfPresent([String].self, forKey: .projects)
-        self.username = try container.decodeIfPresent(String.self, forKey: .username)
-        self.password = try container.decodeIfPresent(String.self, forKey: .password)
-        
+        self.token = try container.decodeIfPresent(String.self, forKey: .token)
+
         if let url = try container.decodeIfPresent(String.self, forKey: .url) {
             self.url = url
         } else {
@@ -125,8 +123,7 @@ extension JiraConfiguration: Decodable {
         case completeKeywords
         case fixVersion
         case projects
-        case username
-        case password
+        case token
         case url
     }
 }
